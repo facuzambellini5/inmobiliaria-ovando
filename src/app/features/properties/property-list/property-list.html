@@ -1,0 +1,67 @@
+<section class="property-list">
+  <header class="property-list__header">
+    <h1 class="property-list__title">Propiedades</h1>
+
+    @if (properties.hasValue()) {
+      <!--
+        @let crea una variable de solo lectura dentro de este bloque.
+        Sin esto, tendríamos que escribir properties.value() cada vez que
+        necesitamos leer algo del resultado — @let lo lee una sola vez.
+      -->
+      @let page = properties.value();
+      <p class="property-list__count">{{ page.totalElements }} en total</p>
+    }
+  </header>
+
+  @if (properties.isLoading()) {
+    <p class="property-list__status">Cargando propiedades…</p>
+  }
+
+  @if (properties.error()) {
+    <p class="property-list__status property-list__status--error" role="alert">
+      No pudimos cargar las propiedades. Probá recargar la página.
+    </p>
+  }
+
+  @if (properties.hasValue()) {
+    @let page = properties.value();
+
+    @if (page.empty) {
+      <p class="property-list__status">Todavía no hay propiedades cargadas.</p>
+    } @else {
+      <table class="property-table">
+        <thead>
+        <tr>
+          <th>Título</th>
+          <th>Tipo</th>
+          <th>Operación</th>
+          <th>Precio</th>
+          <th>Dirección</th>
+          <th>Estado</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- track property.id: le decimos a Angular con qué identificar
+             cada fila, para que al recargar datos reordene el DOM en vez
+             de destruir y recrear cada <tr> de cero. -->
+          @for (property of page.content; track property.id) {
+            <tr>
+              <td>{{ property.title }}</td>
+              <td>{{ property.type }}</td>
+              <td>{{ property.operation }}</td>
+              <td>
+                @if (property.salePrice) {
+                  {{ property.currency }} {{ property.salePrice }}
+                } @else if (property.rentPrice) {
+                  {{ property.currency }} {{ property.rentPrice }} / mes
+                }
+              </td>
+              <td>{{ property.address }}</td>
+              <td>{{ property.status }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  }
+</section>
