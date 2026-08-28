@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { Auth } from '../services/auth';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const auth = inject(Auth)
+  const auth = inject(Auth);
   const token = auth.getToken();
 
   if (!token) {
@@ -11,8 +11,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   const authReq = req.clone({
-    setHeaders: {Authorization: `Bearer ${token}`},
-  })
+    setHeaders: { Authorization: `Bearer ${token}` },
+  });
 
-  return next(req);
+  return next(authReq);
 };

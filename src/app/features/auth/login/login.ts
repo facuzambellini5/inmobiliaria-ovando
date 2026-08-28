@@ -3,32 +3,36 @@ import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { form, FormField, submit, required, minLength, maxLength } from '@angular/forms/signals';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Auth } from '../../../core/services/auth';
 
 @Component({
   selector: 'app-login',
-  // FormField es la directiva que conecta cada <input> del HTML con su
-  // campo correspondiente dentro de loginForm.
-  imports: [FormField],
+  imports: [
+    FormField,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+  ],
   styleUrl: './login.scss',
   templateUrl: './login.html',
   standalone: true,
 })
-
 export class Login {
   private readonly auth = inject(Auth);
   private readonly router = inject(Router);
 
-  // El "modelo": los valores reales que vive el formulario.
   protected readonly credentialsModel = signal({
     username: '',
     password: '',
   });
 
-  // form() arma la estructura del formulario a partir del modelo de arriba.
-  // Los límites 3-50 / 4-100 son sentido común del lado del cliente (el
-  // backend solo exige "no vacío"), pensados para pescar typos obvios antes
-  // de gastar una llamada HTTP.
   protected readonly loginForm = form(this.credentialsModel, (schemaPath) => {
     required(schemaPath.username, { message: 'Ingresá tu usuario' });
     minLength(schemaPath.username, 3, { message: 'Mínimo 3 caracteres' });
@@ -39,24 +43,15 @@ export class Login {
     maxLength(schemaPath.password, 100, { message: 'Máximo 100 caracteres' });
   });
 
-  // Error "general" (credenciales incorrectas, servidor caído), no de un
-  // campo puntual. Se muestra arriba del botón.
   protected readonly loginError = signal<string | null>(null);
-
-  // Mientras esperamos al backend, deshabilitamos el botón para que no se
-  // pueda mandar el form dos veces haciendo doble click.
   protected readonly isSubmitting = signal(false);
 
   protected onSubmit(): void {
-    // submit() marca todos los campos como "touched" (para que se vean los
-    // errores) y SOLO ejecuta el callback si el form es válido.
     submit(this.loginForm, async () => {
       this.loginError.set(null);
       this.isSubmitting.set(true);
 
       try {
-        // firstValueFrom convierte el Observable en Promise Y se suscribe,
-        // que es lo que realmente dispara la petición HTTP.
         await firstValueFrom(this.auth.login(this.credentialsModel()));
         this.router.navigateByUrl('/propiedades');
       } catch (error) {

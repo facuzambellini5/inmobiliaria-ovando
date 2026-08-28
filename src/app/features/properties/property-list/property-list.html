@@ -1,20 +1,16 @@
 <section class="property-list">
   <header class="property-list__header">
     <h1 class="property-list__title">Propiedades</h1>
-
     @if (properties.hasValue()) {
-      <!--
-        @let crea una variable de solo lectura dentro de este bloque.
-        Sin esto, tendríamos que escribir properties.value() cada vez que
-        necesitamos leer algo del resultado — @let lo lee una sola vez.
-      -->
       @let page = properties.value();
       <p class="property-list__count">{{ page.totalElements }} en total</p>
     }
   </header>
 
   @if (properties.isLoading()) {
-    <p class="property-list__status">Cargando propiedades…</p>
+    <div class="property-list__status">
+      <mat-spinner diameter="32" />
+    </div>
   }
 
   @if (properties.error()) {
@@ -29,38 +25,45 @@
     @if (page.empty) {
       <p class="property-list__status">Todavía no hay propiedades cargadas.</p>
     } @else {
-      <table class="property-table">
-        <thead>
-        <tr>
-          <th>Título</th>
-          <th>Tipo</th>
-          <th>Operación</th>
-          <th>Precio</th>
-          <th>Dirección</th>
-          <th>Estado</th>
-        </tr>
-        </thead>
-        <tbody>
-        <!-- track property.id: le decimos a Angular con qué identificar
-             cada fila, para que al recargar datos reordene el DOM en vez
-             de destruir y recrear cada <tr> de cero. -->
-          @for (property of page.content; track property.id) {
-            <tr>
-              <td>{{ property.title }}</td>
-              <td>{{ property.type }}</td>
-              <td>{{ property.operation }}</td>
-              <td>
-                @if (property.salePrice) {
-                  {{ property.currency }} {{ property.salePrice }}
-                } @else if (property.rentPrice) {
-                  {{ property.currency }} {{ property.rentPrice }} / mes
-                }
-              </td>
-              <td>{{ property.address }}</td>
-              <td>{{ property.status }}</td>
-            </tr>
-          }
-        </tbody>
+      <table mat-table [dataSource]="page.content" class="property-table">
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef>Título</th>
+          <td mat-cell *matCellDef="let property">{{ property.title }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef>Tipo</th>
+          <td mat-cell *matCellDef="let property">{{ property.type }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="operation">
+          <th mat-header-cell *matHeaderCellDef>Operación</th>
+          <td mat-cell *matCellDef="let property">{{ property.operation }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef>Precio</th>
+          <td mat-cell *matCellDef="let property">
+            @if (property.salePrice) {
+              {{ property.currency }} {{ property.salePrice }}
+            } @else if (property.rentPrice) {
+              {{ property.currency }} {{ property.rentPrice }} / mes
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="address">
+          <th mat-header-cell *matHeaderCellDef>Dirección</th>
+          <td mat-cell *matCellDef="let property">{{ property.address }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let property">{{ property.status }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
     }
   }

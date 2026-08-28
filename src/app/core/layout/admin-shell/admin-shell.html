@@ -1,0 +1,19 @@
+<mat-toolbar class="admin-toolbar">
+  <div class="admin-toolbar__brand">
+    <img class="admin-toolbar__logo" src="/logo.jpeg" alt="Ovando Vende" />
+    <div class="admin-toolbar__titles">
+      <span class="admin-toolbar__title">Panel admin</span>
+      <span class="admin-toolbar__subtitle">Inmobiliaria Ovando</span>
+    </div>
+  </div>
+
+  <span class="admin-toolbar__spacer"></span>
+
+  <!-- TODO: cuando exista el sitio público, apuntar a la URL real -->
+  <a class="admin-toolbar__link" href="/" target="_blank" rel="noopener">Ver sitio</a>
+  <button matButton="outlined" (click)="onLogout()">Salir</button>
+</mat-toolbar>
+
+<main class="admin-shell__content">
+  <router-outlet />
+</main>
