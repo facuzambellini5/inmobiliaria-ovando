@@ -1,0 +1,100 @@
+.hero {
+  position: relative;
+  min-height: 32rem;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: linear-gradient(115deg, var(--color-brand-red) 0%, #4a0605 55%, #1a1210 100%);
+  color: #ffffff;
+
+  @media (max-width: 600px) {
+    min-height: 26rem;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  &__house {
+    position: absolute;
+    right: -4rem;
+    bottom: -4rem;
+    width: 26rem;
+    height: 26rem;
+    color: var(--color-brand-gold);
+    opacity: 0.18;
+    pointer-events: none;
+
+    @media (max-width: 700px) {
+      width: 16rem;
+      height: 16rem;
+      right: -3rem;
+      bottom: -3rem;
+    }
+  }
+
+  &__content {
+    position: relative;
+    z-index: 1;
+    max-width: 42rem;
+    padding: 4rem 2rem;
+
+    @media (max-width: 600px) {
+      padding: 3rem 1.25rem;
+    }
+  }
+
+  &__title {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 6vw, 3.75rem);
+    font-weight: 600;
+    line-height: 1.05;
+    margin: 0;
+    animation: hero-rise 0.7s ease-out both;
+  }
+
+  &__subtitle {
+    font-family: var(--font-body);
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 1rem 0 0;
+    animation: hero-rise 0.7s ease-out 0.15s both;
+  }
+
+  &__cta {
+    display: inline-block;
+    margin-top: 2rem;
+    padding: 0.85rem 1.75rem;
+    background-color: var(--color-brand-gold);
+    color: #1a1210;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    border-radius: 0.25rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    animation: hero-rise 0.7s ease-out 0.3s both;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    }
+  }
+}
+
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__title, .hero__subtitle, .hero__cta {
+    animation: none;
+  }
+}

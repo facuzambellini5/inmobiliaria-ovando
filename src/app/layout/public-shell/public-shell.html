@@ -1,0 +1,50 @@
+<header class="public-nav">
+  <a class="public-nav__brand" routerLink="/">
+    <img class="public-nav__logo" src="/logo.jpeg" alt="Ovando Vende" />
+    <span class="public-nav__title">Inmobiliaria Ovando</span>
+  </a>
+
+  <nav class="public-nav__links">
+    <a class="public-nav__link" routerLink="/propiedades">Propiedades</a>
+    <a class="public-nav__link" routerLink="/admin">Admin</a>
+  </nav>
+</header>
+
+<main>
+  <router-outlet />
+</main>
+
+<footer class="public-footer">
+  <div class="public-footer__grid">
+    <div class="public-footer__col">
+      <h3 class="public-footer__heading">Contacto</h3>
+      <a class="public-footer__line" href="tel:4425316">
+        <span class="material-icons" aria-hidden="true">call</span>
+        4425316
+      </a>
+      <a class="public-footer__line" href="https://wa.me/5493644456464" target="_blank" rel="noopener">
+        <span class="material-icons" aria-hidden="true">chat</span>
+        364456464
+      </a>
+    </div>
+
+    <div class="public-footer__col">
+      <h3 class="public-footer__heading">Ubicación</h3>
+      <p class="public-footer__line">
+        <span class="material-icons" aria-hidden="true">place</span>
+        San Martín 1171
+      </p>
+    </div>
+
+    <div class="public-footer__col public-footer__col--brand">
+      <div class="public-footer__brand">
+        <img class="public-footer__logo" src="/logo.jpeg" alt="Ovando Vende" />
+        <div>
+          <p class="public-footer__brand-title">Inmobiliaria Ovando</p>
+          <p class="public-footer__brand-tagline">Tu próxima propiedad, más cerca de vos</p>
+        </div>
+      </div>
+      <p class="public-footer__copy">© {{ currentYear }} Inmobiliaria Ovando.</p>
+    </div>
+  </div>
+</footer>
