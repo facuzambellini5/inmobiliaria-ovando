@@ -1,0 +1,57 @@
+<div class="property-photos">
+  <div class="property-photos__header">
+    <h3 class="property-photos__title">
+      Fotos
+      @if (photos.hasValue()) {
+        ({{ photos.value().length }}/15)
+      }
+    </h3>
+
+    <button
+      matButton="outlined"
+      type="button"
+      (click)="fileInput.click()"
+      [disabled]="isUploading() || (photos.value()?.length ?? 0) >= 15"
+    >
+      @if (isUploading()) {
+        <mat-spinner diameter="18" />
+      } @else {
+        Agregar imágenes
+      }
+    </button>
+    <input #fileInput type="file" accept="image/*" multiple hidden (change)="onFilesSelected($event)" />
+  </div>
+
+  @if (photos.isLoading()) {
+    <p class="property-photos__status">Cargando fotos…</p>
+  }
+
+  @if (photos.error()) {
+    <p class="property-photos__status property-photos__status--error" role="alert">
+      No pudimos cargar las fotos.
+    </p>
+  }
+
+  @if (photos.hasValue()) {
+    @if (photos.value().length === 0) {
+      <p class="property-photos__empty">Subí entre 1 y 15 imágenes.</p>
+    } @else {
+      <div class="property-photos__grid">
+        @for (photo of photos.value(); track photo.id) {
+          <div class="photo-thumb">
+            <img [src]="photo.url" alt="" />
+            <button
+              matIconButton
+              type="button"
+              class="photo-thumb__delete"
+              (click)="onDeletePhoto(photo)"
+              aria-label="Borrar foto"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

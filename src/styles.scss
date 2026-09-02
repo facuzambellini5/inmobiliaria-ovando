@@ -4,14 +4,14 @@
 // Learn more about theming and how to use it for your application's
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
+@import 'leaflet/dist/leaflet.css';
 
 html {
   height: 100%;
   @include mat.theme(
     (
       color: (
-        primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette,
+        primary: mat.$red-palette,
       ),
       typography: Roboto,
       density: 0,
@@ -37,3 +37,12 @@ body {
   height: 100%;
 }
 /* You can add global styles to this file, and also import other style files */
+
+// El contenido de cada mat-tab (Activas/Historial) trae padding propio de
+// Material que no necesitamos, porque property-list ya tiene su propio
+// padding general. No hace falta ::ng-deep para esto: los estilos GLOBALES
+// (este archivo) no están encapsulados por componente, así que llegan
+// directo al DOM interno de Material sin ningún truco.
+.mat-mdc-tab-body-content {
+  padding-top: 1rem;
+}

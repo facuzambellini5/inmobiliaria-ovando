@@ -1,0 +1,9 @@
+<button matButton [matMenuTriggerFor]="menu">Estado</button>
+
+<mat-menu #menu="matMenu">
+  @for (status of otherStatuses; track status) {
+    <button mat-menu-item (click)="statusSelected.emit(status)">
+      Marcar como {{ statusLabels[status] }}
+    </button>
+  }
+</mat-menu>

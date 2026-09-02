@@ -45,6 +45,20 @@
       text-decoration: underline;
     }
   }
+
+  // Con logo + título + subtítulo + "Ver sitio" + "Salir" todos en una
+  // sola fila, en un celular angosto no entra todo — en vez de dejar que
+  // se corte o se superponga, sacamos lo menos esencial (el subtítulo y
+  // el link "Ver sitio") y dejamos lo importante: volver al panel, y salir.
+  @media (max-width: 480px) {
+    &__subtitle {
+      display: none;
+    }
+
+    &__link {
+      display: none;
+    }
+  }
 }
 
 .admin-shell__content {

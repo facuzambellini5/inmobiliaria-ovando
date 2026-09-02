@@ -1,0 +1,179 @@
+<section class="property-form-page">
+  <h1 class="property-form-page__title">
+    {{ isEditMode ? 'Editar propiedad' : 'Publicar nueva propiedad' }}
+  </h1>
+
+  @if (isLoading()) {
+    <div class="property-form-page__status">
+      <mat-spinner diameter="32" />
+    </div>
+  } @else {
+    <mat-card appearance="outlined" class="property-form-card">
+      <form (submit)="onSubmit(); $event.preventDefault()">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-row__field">
+            <mat-label>Título</mat-label>
+            <input matInput [formField]="propertyForm.title" />
+            @if (propertyForm.title().touched() && propertyForm.title().errors().length) {
+              <mat-error>{{ propertyForm.title().errors()[0].message }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-row__field">
+            <mat-label>Dirección</mat-label>
+            <input matInput [formField]="propertyForm.address" />
+            @if (propertyForm.address().touched() && propertyForm.address().errors().length) {
+              <mat-error>{{ propertyForm.address().errors()[0].message }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="form-row__field form-row__field--full">
+          <mat-label>Descripción</mat-label>
+          <textarea matInput rows="4" [formField]="propertyForm.description"></textarea>
+          @if (propertyForm.description().touched() && propertyForm.description().errors().length) {
+            <mat-error>{{ propertyForm.description().errors()[0].message }}</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="form-row form-row--four">
+          <mat-form-field appearance="outline" class="form-row__field">
+            <mat-label>Tipo</mat-label>
+            <mat-select [formField]="propertyForm.type">
+              @for (option of typeOptions; track option[0]) {
+                <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-row__field">
+            <mat-label>Operación</mat-label>
+            <mat-select [formField]="propertyForm.operation">
+              @for (option of operationOptions; track option[0]) {
+                <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-row__field">
+            <mat-label>Zona</mat-label>
+            <mat-select [formField]="propertyForm.zone">
+              @for (option of zoneOptions; track option[0]) {
+                <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-row__field">
+            <mat-label>Estado</mat-label>
+            <mat-select [formField]="propertyForm.status">
+              @for (option of statusOptions; track option[0]) {
+                <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-row__field">
+            <mat-label>Moneda</mat-label>
+            <mat-select [formField]="propertyForm.currency">
+              <mat-option value="ARS">ARS</mat-option>
+              <mat-option value="USD">USD</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          @if (propertyForm.operation().value() === 'VENTA' || propertyForm.operation().value() === 'AMBAS') {
+            <mat-form-field appearance="outline" class="form-row__field">
+              <mat-label>Precio de venta</mat-label>
+              <input matInput type="number" [formField]="propertyForm.salePrice" />
+              @if (propertyForm.salePrice().touched() && propertyForm.salePrice().errors().length) {
+                <mat-error>{{ propertyForm.salePrice().errors()[0].message }}</mat-error>
+              }
+            </mat-form-field>
+          }
+
+          @if (propertyForm.operation().value() === 'ALQUILER' || propertyForm.operation().value() === 'AMBAS') {
+            <mat-form-field appearance="outline" class="form-row__field">
+              <mat-label>Precio de alquiler</mat-label>
+              <input matInput type="number" [formField]="propertyForm.rentPrice" />
+              @if (propertyForm.rentPrice().touched() && propertyForm.rentPrice().errors().length) {
+                <mat-error>{{ propertyForm.rentPrice().errors()[0].message }}</mat-error>
+              }
+            </mat-form-field>
+          }
+        </div>
+
+        <div class="form-row form-row--details">
+          <mat-form-field appearance="outline" class="form-row__field form-row__field--small">
+            <mat-label>Ambientes</mat-label>
+            <input matInput type="number" [formField]="propertyForm.rooms" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-row__field form-row__field--small">
+            <mat-label>Dormitorios</mat-label>
+            <input matInput type="number" [formField]="propertyForm.bedrooms" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-row__field form-row__field--small">
+            <mat-label>Baños</mat-label>
+            <input matInput type="number" [formField]="propertyForm.bathrooms" />
+          </mat-form-field>
+
+          <label class="form-row__toggle">
+            <span>Garage</span>
+            <mat-slide-toggle [formField]="propertyForm.hasGarage" />
+          </label>
+
+          <label class="form-row__toggle">
+            <span>Patio</span>
+            <mat-slide-toggle [formField]="propertyForm.hasPatio" />
+          </label>
+        </div>
+
+        <div class="property-form-card__map-placeholder">
+          <p class="property-form-card__map-note">Ubicación en el mapa</p>
+
+          <app-property-location-picker
+            [lat]="propertyForm.lat().value()"
+            [lng]="propertyForm.lng().value()"
+            (locationSelected)="onLocationSelected($event)"
+          />
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="form-row__field">
+              <mat-label>Latitud</mat-label>
+              <input matInput type="number" step="any" [formField]="propertyForm.lat" />
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="form-row__field">
+              <mat-label>Longitud</mat-label>
+              <input matInput type="number" step="any" [formField]="propertyForm.lng" />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <app-property-photos #photosSection [propertyId]="propertyId" />
+
+        @if (saveError()) {
+          <p class="property-form-card__error" role="alert">{{ saveError() }}</p>
+        }
+
+        <div class="property-form-card__actions">
+          <button matButton="outlined" type="button" (click)="onCancel()">Cancelar</button>
+          <button
+            matButton="filled"
+            color="primary"
+            type="submit"
+            [disabled]="propertyForm().invalid() || isSubmitting()"
+          >
+            @if (isSubmitting()) {
+              <mat-spinner diameter="20" />
+            } @else {
+              {{ isEditMode ? 'Guardar cambios' : 'Publicar propiedad' }}
+            }
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  }
+</section>

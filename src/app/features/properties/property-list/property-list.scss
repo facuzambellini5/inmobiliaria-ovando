@@ -3,17 +3,20 @@
 
   &__header {
     display: flex;
-    align-items: baseline;
+    align-items: flex-start;
     justify-content: space-between;
     margin-bottom: 1.5rem;
+    gap: 1rem;
   }
 
   &__title {
     font-size: 1.5rem;
     font-weight: 700;
+    margin: 0;
   }
 
   &__count {
+    margin: 0.25rem 0 0;
     font-size: 0.875rem;
     color: var(--mat-sys-on-surface-variant);
   }
@@ -29,11 +32,4 @@
       color: var(--mat-sys-error);
     }
   }
-}
-
-.property-table {
-  width: 100%;
-  border-radius: 0.75rem;
-  overflow: hidden;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }

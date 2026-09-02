@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
-import { Auth } from '../../services/auth';
+import { Auth } from '../../core/services/auth';
 
 @Component({
   selector: 'app-admin-shell',

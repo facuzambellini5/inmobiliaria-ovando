@@ -1,0 +1,106 @@
+.property-form-page {
+  // max-width sin margin:auto no centra nada — el bloque se queda pegado
+  // a la izquierda porque sigue siendo un elemento de ancho fijo normal.
+  padding: 2rem;
+  max-width: 60rem;
+  margin: 0 auto;
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 1.5rem;
+  }
+
+  // En pantallas angostas (celular), menos padding lateral — si no, el
+  // contenido queda apretado contra el borde de la pantalla.
+  @media (max-width: 600px) {
+    padding: 1rem;
+  }
+
+  &__status {
+    display: flex;
+    justify-content: center;
+    padding: 3rem 1rem;
+  }
+}
+
+.property-form-card {
+  padding: 2rem;
+
+  @media (max-width: 600px) {
+    padding: 1.25rem;
+  }
+
+  &__map-placeholder {
+    background-color: #f9fafb;
+    border: 1px dashed #d1d5db;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin: 1rem 0 1.5rem;
+  }
+
+  &__map-note {
+    margin: 0 0 1rem;
+    font-size: 0.875rem;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  &__error {
+    color: var(--mat-sys-error);
+    font-size: 0.875rem;
+    margin: 0 0 1rem;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1rem;
+
+    // En celular, botones de ancho completo apilados — más fácil de
+    // tocar que dos botones chicos lado a lado.
+    @media (max-width: 480px) {
+      flex-direction: column-reverse;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+
+  &--four .form-row__field {
+    flex: 1 1 11rem;
+  }
+
+  &--details {
+    align-items: center;
+  }
+
+  &__field {
+    flex: 1 1 14rem;
+
+    &--full {
+      flex: 1 1 100%;
+      width: 100%;
+    }
+
+    &--small {
+      flex: 1 1 8rem;
+    }
+  }
+
+  &__toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--mat-sys-on-surface-variant);
+  }
+}

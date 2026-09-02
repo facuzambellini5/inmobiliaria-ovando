@@ -1,0 +1,20 @@
+.property-location-picker {
+  &__map {
+    // Leaflet necesita que el contenedor tenga una altura real y explícita
+    // — con height: auto (o sin altura) el mapa queda en blanco/roto,
+    // porque no tiene de dónde calcular su propio tamaño en píxeles.
+    height: 20rem;
+    border-radius: 0.75rem;
+    overflow: hidden;
+
+    @media (max-width: 600px) {
+      height: 14rem;
+    }
+  }
+
+  &__hint {
+    margin: 0.5rem 0 0;
+    font-size: 0.8rem;
+    color: var(--mat-sys-on-surface-variant);
+  }
+}

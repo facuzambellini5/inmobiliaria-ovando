@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
@@ -6,8 +6,5 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-root',
   styleUrl: './app.scss',
   templateUrl: './app.html',
-  standalone: true,
 })
-export class App {
-  protected readonly title = signal('inmobiliaria-ovando');
-}
+export class App {}
