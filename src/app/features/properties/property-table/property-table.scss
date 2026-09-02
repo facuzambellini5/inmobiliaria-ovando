@@ -1,24 +1,5 @@
-@use '@angular/material' as mat;
-
-// La tabla tiene 7 columnas — no entra en el ancho de un celular. En vez
-// de achicar todo hasta ilegible, dejamos que este contenedor scrollee
-// horizontal (como cualquier tabla de datos en una app real), y la tabla
-// en sí mantiene un ancho mínimo legible.
-.property-table-scroll {
-  overflow-x: auto;
-  border-radius: 0.75rem;
-
-  // mat-elevation-z2 (la clase CSS) está rota en el sistema de temas M3
-  // que usamos — no genera ningún box-shadow (es un bug conocido de
-  // Angular Material, reportado en su propio repo). El mixin de Sass sí
-  // funciona: calcula la sombra real del nivel de elevación 2 del spec
-  // de Material, en vez de que yo la invente a mano.
-  @include mat.elevation(2);
-}
-
 .property-table {
   width: 100%;
-  min-width: 42rem;
 
   // Por default, mat-table le da a cada fila una altura FIJA pensada para
   // texto simple (~52px) — no le alcanza a un botón + el trigger de

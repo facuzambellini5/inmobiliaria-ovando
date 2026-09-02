@@ -15,7 +15,7 @@
 
   @if (properties.isLoading()) {
     <div class="property-list__status">
-      <mat-spinner diameter="32" />
+      <mat-spinner diameter="32"></mat-spinner>
     </div>
   }
 
@@ -27,19 +27,28 @@
 
   @if (properties.hasValue()) {
     <mat-tab-group class="property-list__tabs">
-      <mat-tab [label]="'Activas (' + activeProperties().length + ')'">
+      <mat-tab [label]="'Disponibles (' + availableProperties().length + ')'">
         <app-property-table
-          [properties]="activeProperties()"
-          emptyMessage="No hay propiedades activas."
+          [properties]="availableProperties()"
+          emptyMessage="No hay propiedades disponibles."
           (edit)="onEditProperty($event)"
           (statusChange)="onStatusChange($event)"
         />
       </mat-tab>
 
-      <mat-tab [label]="'Historial (' + historyProperties().length + ')'">
+      <mat-tab [label]="'Alquiladas (' + rentedProperties().length + ')'">
         <app-property-table
-          [properties]="historyProperties()"
-          emptyMessage="Todavía no hay propiedades en el historial."
+          [properties]="rentedProperties()"
+          emptyMessage="Todavía no hay propiedades alquiladas."
+          (edit)="onEditProperty($event)"
+          (statusChange)="onStatusChange($event)"
+        />
+      </mat-tab>
+
+      <mat-tab [label]="'Vendidas (' + selledProperties().length + ')'">
+        <app-property-table
+          [properties]="selledProperties()"
+          emptyMessage="Todavía no hay propiedades vendidas."
           (edit)="onEditProperty($event)"
           (statusChange)="onStatusChange($event)"
         />

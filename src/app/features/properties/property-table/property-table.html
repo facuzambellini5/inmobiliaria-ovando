@@ -1,65 +1,63 @@
 @if (properties().length === 0) {
   <p class="property-table__empty">{{ emptyMessage() }}</p>
 } @else {
-  <div class="property-table-scroll">
-    <table mat-table [dataSource]="properties()" class="property-table">
-      <ng-container matColumnDef="title">
-        <th mat-header-cell *matHeaderCellDef>Título</th>
-        <td mat-cell *matCellDef="let property">{{ property.title }}</td>
-      </ng-container>
+  <table mat-table [dataSource]="properties()" class="property-table">
+    <ng-container matColumnDef="title">
+      <th mat-header-cell *matHeaderCellDef>Título</th>
+      <td mat-cell *matCellDef="let property">{{ property.title }}</td>
+    </ng-container>
 
-      <ng-container matColumnDef="type">
-        <th mat-header-cell *matHeaderCellDef>Tipo</th>
-        <td mat-cell *matCellDef="let property">{{ typeLabel(property.type) }}</td>
-      </ng-container>
+    <ng-container matColumnDef="type">
+      <th mat-header-cell *matHeaderCellDef>Tipo</th>
+      <td mat-cell *matCellDef="let property">{{ typeLabel(property.type) }}</td>
+    </ng-container>
 
-      <ng-container matColumnDef="operation">
-        <th mat-header-cell *matHeaderCellDef>Operación</th>
-        <td mat-cell *matCellDef="let property">{{ operationLabel(property.operation) }}</td>
-      </ng-container>
+    <ng-container matColumnDef="operation">
+      <th mat-header-cell *matHeaderCellDef>Operación</th>
+      <td mat-cell *matCellDef="let property">{{ operationLabel(property.operation) }}</td>
+    </ng-container>
 
-      <ng-container matColumnDef="price">
-        <th mat-header-cell *matHeaderCellDef>Precio</th>
-        <td mat-cell *matCellDef="let property">
-          @if (property.salePrice) {
-            {{ property.currency }} {{ property.salePrice | number }}
-          }
-          @if (property.salePrice && property.rentPrice) {
-            <span> · </span>
-          }
-          @if (property.rentPrice) {
-            {{ property.currency }} {{ property.rentPrice | number }}/mes
-          }
-        </td>
-      </ng-container>
+    <ng-container matColumnDef="price">
+      <th mat-header-cell *matHeaderCellDef>Precio</th>
+      <td mat-cell *matCellDef="let property">
+        @if (property.salePrice) {
+          {{ property.currency }} {{ property.salePrice | number }}
+        }
+        @if (property.salePrice && property.rentPrice) {
+          <span> · </span>
+        }
+        @if (property.rentPrice) {
+          {{ property.currency }} {{ property.rentPrice | number }}/mes
+        }
+      </td>
+    </ng-container>
 
-      <ng-container matColumnDef="zone">
-        <th mat-header-cell *matHeaderCellDef>Zona</th>
-        <td mat-cell *matCellDef="let property">{{ zoneLabel(property.zone) }}</td>
-      </ng-container>
+    <ng-container matColumnDef="zone">
+      <th mat-header-cell *matHeaderCellDef>Zona</th>
+      <td mat-cell *matCellDef="let property">{{ zoneLabel(property.zone) }}</td>
+    </ng-container>
 
-      <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef>Estado</th>
-        <td mat-cell *matCellDef="let property">
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Estado</th>
+      <td mat-cell *matCellDef="let property">
         <span class="status-chip" [class]="'status-chip--' + property.status.toLowerCase()">
           {{ statusLabel(property.status) }}
         </span>
-        </td>
-      </ng-container>
+      </td>
+    </ng-container>
 
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>Acciones</th>
-        <td mat-cell *matCellDef="let property" class="property-table__actions">
-          <button matButton="outlined" (click)="edit.emit(property)">Editar</button>
-          <app-property-status-menu
-            [currentStatus]="property.status"
-            (statusSelected)="onStatusSelected(property, $event)"
-          />
-        </td>
-      </ng-container>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Acciones</th>
+      <td mat-cell *matCellDef="let property" class="property-table__actions">
+        <button matButton (click)="edit.emit(property)">Editar</button>
+        <app-property-status-menu
+          [currentStatus]="property.status"
+          (statusSelected)="onStatusSelected(property, $event)"
+        />
+      </td>
+    </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-    </table>
-  </div>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
 }

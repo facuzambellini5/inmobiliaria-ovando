@@ -9,12 +9,25 @@
 html {
   height: 100%;
   @include mat.theme(
-    (
-      color: (
-        primary: mat.$red-palette,
+      (
+        color: (
+          primary: mat.$red-palette,
+        ),
+        typography: Roboto,
+        density: 0,
       ),
-      typography: Roboto,
-      density: 0,
+    $overrides: (
+      surface: #fafafa,
+      surface-dim: #e7e7e7,
+      surface-bright: #ffffff,
+      surface-container-lowest: #ffffff,
+      surface-container-low: #f7f7f7,
+      surface-container: #f2f2f2,
+      surface-container-high: #ececec,
+      surface-container-highest: #e6e6e6,
+      surface-variant: #f0f0f0,
+      background: #fafafa,
+      outline-variant: #dedede,
     )
   );
 }

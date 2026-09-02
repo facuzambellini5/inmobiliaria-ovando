@@ -11,7 +11,10 @@ describe('PropertyLocationPicker', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(PropertyLocationPicker);
+    fixture.componentRef.setInput('lat', -27.4512);
+    fixture.componentRef.setInput('lng', -58.9866);
     component = fixture.componentInstance;
+    fixture.detectChanges();
     await fixture.whenStable();
   });
 

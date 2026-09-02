@@ -35,13 +35,18 @@ export class PropertyList {
     params: { page: 0, size: 20 },
   }));
 
-  protected readonly activeProperties = computed(
+  protected readonly availableProperties = computed(
     () =>
       this.properties.value()?.content.filter((property) => property.status === 'DISPONIBLE') ?? [],
   );
-  protected readonly historyProperties = computed(
+  protected readonly selledProperties = computed(
     () =>
-      this.properties.value()?.content.filter((property) => property.status !== 'DISPONIBLE') ?? [],
+      this.properties.value()?.content.filter((property) => property.status === 'VENDIDA') ?? [],
+  );
+
+  protected readonly rentedProperties = computed(
+    () =>
+      this.properties.value()?.content.filter((property) => property.status === 'ALQUILADA') ?? [],
   );
 
   protected onNewProperty(): void {
