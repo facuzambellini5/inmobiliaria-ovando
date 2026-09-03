@@ -1,0 +1,52 @@
+<a class="property-card" [routerLink]="['/propiedades', property().id]">
+  <div class="property-card__image">
+    @if (property().images.length > 0) {
+      <img [src]="property().images[0]" [alt]="property().title" />
+    } @else {
+      <div class="property-card__image-placeholder">
+        <span class="material-icons" aria-hidden="true">home</span>
+      </div>
+    }
+  </div>
+
+  <div class="property-card__body">
+    <div class="property-card__tags">
+      <span class="property-card__tag">{{ typeLabels[property().type] }}</span>
+      <span class="property-card__tag">{{ operationLabels[property().operation] }}</span>
+      @if (property().zone) {
+        <span class="property-card__tag">{{ zoneLabels[property().zone!] }}</span>
+      }
+    </div>
+
+    <h3 class="property-card__title">{{ property().title }}</h3>
+
+    @if (property().bedrooms || property().bathrooms) {
+      <div class="property-card__details">
+        @if (property().bedrooms) {
+          <span class="property-card__detail">
+            <span class="material-icons" aria-hidden="true">bed</span>
+            {{ property().bedrooms }}
+          </span>
+        }
+        @if (property().bathrooms) {
+          <span class="property-card__detail">
+            <span class="material-icons" aria-hidden="true">bathtub</span>
+            {{ property().bathrooms }}
+          </span>
+        }
+      </div>
+    }
+
+    <p class="property-card__price">
+      @if (property().salePrice) {
+        {{ property().currency }} {{ property().salePrice | number }}
+      }
+      @if (property().salePrice && property().rentPrice) {
+        <span> · </span>
+      }
+      @if (property().rentPrice) {
+        {{ property().currency }} {{ property().rentPrice | number }}/mes
+      }
+    </p>
+  </div>
+</a>

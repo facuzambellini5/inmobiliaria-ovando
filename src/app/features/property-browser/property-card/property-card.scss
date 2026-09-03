@@ -1,0 +1,102 @@
+.property-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid #e6e6e6;
+  border-radius: 0.6rem;
+  overflow: hidden;
+  background-color: #ffffff;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+
+  &:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  &__image {
+    aspect-ratio: 4 / 3;
+    background-color: #f0f0f0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  &__image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #b0b0b0;
+
+    .material-icons {
+      font-size: 2.5rem;
+    }
+  }
+
+  &__body {
+    padding: 1rem;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.6rem;
+  }
+
+  &__tag {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    background-color: #f2f2f2;
+    color: #4b5563;
+  }
+
+  &__title {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 0.5rem;
+    // Corta el título a 2 líneas — títulos largos no rompen el layout
+    // de la card ni la hacen más alta que las demás en la misma fila.
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__details {
+    display: flex;
+    gap: 0.9rem;
+    margin-bottom: 0.6rem;
+  }
+
+  &__detail {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: #6b7280;
+
+    .material-icons {
+      font-size: 1rem;
+    }
+  }
+
+  &__price {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--color-brand-red);
+    margin: 0;
+  }
+}

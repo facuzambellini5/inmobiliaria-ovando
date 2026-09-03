@@ -1,0 +1,46 @@
+<section class="property-browser">
+  <header class="property-browser__header">
+    <div>
+      <h1 class="property-browser__title">Propiedades disponibles</h1>
+      @if (properties.hasValue()) {
+        <p class="property-browser__count">{{ filteredProperties().length }} resultados</p>
+      }
+    </div>
+
+    <label class="property-browser__sort">
+      <select [value]="sortBy()" (change)="onSortChange($any($event.target).value)">
+        <option value="newest">Más nuevos</option>
+        <option value="price-asc">Precio: menor a mayor</option>
+        <option value="price-desc">Precio: mayor a menor</option>
+      </select>
+    </label>
+  </header>
+
+  @if (properties.isLoading()) {
+    <p class="property-browser__status">Cargando propiedades…</p>
+  }
+
+  @if (properties.error()) {
+    <p class="property-browser__status property-browser__status--error" role="alert">
+      No pudimos cargar las propiedades. Probá recargar la página.
+    </p>
+  }
+
+  @if (properties.hasValue()) {
+    <div class="property-browser__layout">
+      <app-property-filters (filtersChange)="onFiltersChange($event)" />
+
+      <div class="property-browser__results">
+        @if (filteredProperties().length === 0) {
+          <p class="property-browser__status">No encontramos propiedades con esos filtros.</p>
+        } @else {
+          <div class="property-browser__grid">
+            @for (property of filteredProperties(); track property.id) {
+              <app-property-card [property]="property" />
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+</section>

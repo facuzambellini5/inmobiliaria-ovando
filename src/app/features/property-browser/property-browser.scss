@@ -1,0 +1,81 @@
+.property-browser {
+  max-width: 78rem;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: var(--font-body);
+
+  @media (max-width: 600px) {
+    padding: 1.25rem 1rem;
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  &__title {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 0;
+    color: #1a1a1a;
+  }
+
+  &__count {
+    margin: 0.25rem 0 0;
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+
+  &__sort select {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.4rem;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    background-color: #ffffff;
+  }
+
+  &__status {
+    padding: 3rem 1rem;
+    text-align: center;
+    color: #6b7280;
+    font-size: 0.9rem;
+
+    &--error {
+      color: var(--color-brand-red);
+    }
+  }
+
+  &__layout {
+    display: grid;
+    grid-template-columns: 16rem 1fr;
+    gap: 2rem;
+    align-items: start;
+
+    // Abajo de cierto ancho, los filtros dejan de ser una barra lateral
+    // fija y pasan a ser un bloque arriba de la grilla — una sidebar de
+    // 16rem simplemente no entra cómoda en una pantalla de celular.
+    @media (max-width: 800px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+
+    @media (max-width: 1000px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 560px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}

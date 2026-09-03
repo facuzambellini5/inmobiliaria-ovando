@@ -1,0 +1,57 @@
+<aside class="property-filters">
+  <div class="property-filters__header">
+    <h2 class="property-filters__title">Filtros</h2>
+    <button type="button" class="property-filters__clear" (click)="onClear()">Limpiar</button>
+  </div>
+
+  <label class="property-filters__field">
+    <span>Tipo</span>
+    <select [value]="type()" (change)="onTypeChange($any($event.target).value)">
+      <option value="">Todos</option>
+      @for (option of typeOptions; track option[0]) {
+        <option [value]="option[0]">{{ option[1] }}</option>
+      }
+    </select>
+  </label>
+
+  <label class="property-filters__field">
+    <span>Operación</span>
+    <select [value]="operation()" (change)="onOperationChange($any($event.target).value)">
+      <option value="">Todas</option>
+      @for (option of operationOptions; track option[0]) {
+        <option [value]="option[0]">{{ option[1] }}</option>
+      }
+    </select>
+  </label>
+
+  <label class="property-filters__field">
+    <span>Zona</span>
+    <select [value]="zone()" (change)="onZoneChange($any($event.target).value)">
+      <option value="">Todas</option>
+      @for (option of zoneOptions; track option[0]) {
+        <option [value]="option[0]">{{ option[1] }}</option>
+      }
+    </select>
+  </label>
+
+  <div class="property-filters__prices">
+    <label class="property-filters__field">
+      <span>Precio mín.</span>
+      <input
+        type="number"
+        placeholder="0"
+        [value]="minPrice() ?? ''"
+        (input)="onMinPriceChange($any($event.target).value)"
+      />
+    </label>
+    <label class="property-filters__field">
+      <span>Precio máx.</span>
+      <input
+        type="number"
+        placeholder="∞"
+        [value]="maxPrice() ?? ''"
+        (input)="onMaxPriceChange($any($event.target).value)"
+      />
+    </label>
+  </div>
+</aside>
