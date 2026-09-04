@@ -6,6 +6,11 @@ export const routes: Routes = [
     loadComponent: () => import('./layout/public-shell/public-shell').then((m) => m.PublicShell),
     children: [
       { path: '', loadComponent: () => import('./features/home/home').then((m) => m.Home) },
+      {
+        path: 'propiedades',
+        loadComponent: () =>
+          import('./features/property-browser/property-browser').then((m) => m.PropertyBrowser),
+      },
     ],
   },
   {

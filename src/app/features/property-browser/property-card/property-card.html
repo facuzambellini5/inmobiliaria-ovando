@@ -1,8 +1,7 @@
 <a class="property-card" [routerLink]="['/propiedades', property().id]">
   <div class="property-card__image">
     @if (property().images.length > 0) {
-      <img [src]="property().images[0]" [alt]="property().title" />
-    } @else {
+      <img [src]="property().images[0].url" [alt]="property().title" />    } @else {
       <div class="property-card__image-placeholder">
         <span class="material-icons" aria-hidden="true">home</span>
       </div>

@@ -1,3 +1,5 @@
+import { PhotoResponse } from './photo.model';
+
 export type PropertyType =
   'CASA' | 'DEPARTAMENTO' | 'TERRENO' | 'LOCAL_COMERCIAL' | 'CAMPO' | 'COCHERA';
 export type OperationType = 'VENTA' | 'ALQUILER' | 'AMBAS' | 'INFORMATIVA';
@@ -78,7 +80,7 @@ export interface PropertyResponse {
   terrainType?: TerrainType;
   createdAt: string;
   updatedAt: string;
-  images: string[];
+  images: PhotoResponse[];
 }
 
 export interface Page<T> {

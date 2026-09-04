@@ -24,37 +24,35 @@ function relevantPrice(property: PropertyResponse): number {
   templateUrl: './property-browser.html',
 })
 export class PropertyBrowser {
-  // Tamaño grande a propósito: filtramos y ordenamos del lado del
-  // cliente sobre esta misma tanda (igual que hacemos en el admin con
-  // Activas/Historial), no hay paginación real todavía.
-  protected readonly properties = httpResource<Page<PropertyResponse>>(() => ({
-    url: `${environment.apiUrl}/properties`,
-    params: { page: 0, size: 50 },
-  }));
-
   protected readonly filters = signal<PropertyFiltersValue>(emptyFilters());
   protected readonly sortBy = signal<SortOption>('newest');
 
+  // Tipo, operación y zona van al backend como query params — cambian
+  // poco (son selects) así que un request por cambio no es problema, y
+  // así el filtrado corre en la base en vez de traer de más. El precio
+  // en cambio se filtra abajo, en el cliente: el input dispara (input)
+  // en cada tecla, y no queremos un request por cada dígito tipeado.
+  protected readonly properties = httpResource<Page<PropertyResponse>>(() => {
+    const { type, operation, zone } = this.filters();
+    const params: Record<string, string | number> = {
+      page: 0,
+      size: 50,
+      // Solo mostramos lo DISPONIBLE en el sitio público — no tiene
+      // sentido ofrecerle a un visitante algo que ya se vendió o alquiló.
+      status: 'DISPONIBLE',
+    };
+    if (type) params['type'] = type;
+    if (operation) params['operation'] = operation;
+    if (zone) params['zone'] = zone;
+
+    return { url: `${environment.apiUrl}/properties`, params };
+  });
+
   protected readonly filteredProperties = computed(() => {
     const all = this.properties.value()?.content ?? [];
-    const { type, operation, zone, minPrice, maxPrice } = this.filters();
+    const { minPrice, maxPrice } = this.filters();
 
-    // Solo mostramos lo DISPONIBLE en el sitio público — no tiene
-    // sentido ofrecerle a un visitante algo que ya se vendió o alquiló.
-    let result = all.filter((property) => property.status === 'DISPONIBLE');
-
-    if (type) {
-      result = result.filter((property) => property.type === type);
-    }
-    if (operation) {
-      // AMBAS califica tanto para el filtro "Venta" como para "Alquiler".
-      result = result.filter(
-        (property) => property.operation === operation || property.operation === 'AMBAS',
-      );
-    }
-    if (zone) {
-      result = result.filter((property) => property.zone === zone);
-    }
+    let result = all;
     if (minPrice !== null) {
       result = result.filter((property) => relevantPrice(property) >= minPrice);
     }

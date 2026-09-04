@@ -53,7 +53,7 @@ export class Login {
 
       try {
         await firstValueFrom(this.auth.login(this.credentialsModel()));
-        this.router.navigateByUrl('/propiedades');
+        this.router.navigateByUrl('/admin/propiedades');
       } catch (error) {
         this.loginError.set(this.mapErrorToMessage(error));
       } finally {

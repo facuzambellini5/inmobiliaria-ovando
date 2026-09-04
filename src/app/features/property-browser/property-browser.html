@@ -16,31 +16,25 @@
     </label>
   </header>
 
-  @if (properties.isLoading()) {
-    <p class="property-browser__status">Cargando propiedades…</p>
-  }
+  <div class="property-browser__layout">
+    <app-property-filters (filtersChange)="onFiltersChange($event)" />
 
-  @if (properties.error()) {
-    <p class="property-browser__status property-browser__status--error" role="alert">
-      No pudimos cargar las propiedades. Probá recargar la página.
-    </p>
-  }
-
-  @if (properties.hasValue()) {
-    <div class="property-browser__layout">
-      <app-property-filters (filtersChange)="onFiltersChange($event)" />
-
-      <div class="property-browser__results">
-        @if (filteredProperties().length === 0) {
-          <p class="property-browser__status">No encontramos propiedades con esos filtros.</p>
-        } @else {
-          <div class="property-browser__grid">
-            @for (property of filteredProperties(); track property.id) {
-              <app-property-card [property]="property" />
-            }
-          </div>
-        }
-      </div>
+    <div class="property-browser__results">
+      @if (properties.isLoading()) {
+        <p class="property-browser__status">Cargando propiedades…</p>
+      } @else if (properties.error()) {
+        <p class="property-browser__status property-browser__status--error" role="alert">
+          No pudimos cargar las propiedades. Probá recargar la página.
+        </p>
+      } @else if (filteredProperties().length === 0) {
+        <p class="property-browser__status">No encontramos propiedades con esos filtros.</p>
+      } @else {
+        <div class="property-browser__grid">
+          @for (property of filteredProperties(); track property.id) {
+            <app-property-card [property]="property" />
+          }
+        </div>
+      }
     </div>
-  }
+  </div>
 </section>

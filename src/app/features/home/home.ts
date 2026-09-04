@@ -1,11 +1,21 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { ViewportScroller } from '@angular/common';
+import { PropertyBrowser } from '../property-browser/property-browser';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink],
+  imports: [PropertyBrowser],
   styleUrl: './home.scss',
   templateUrl: './home.html',
-  standalone: true,
 })
-export class Home {}
+export class Home {
+  private readonly viewportScroller = inject(ViewportScroller);
+
+  // El botón del cover no navega a ninguna ruta nueva: las propiedades
+  // ya están renderizadas más abajo en esta misma página, así que solo
+  // hace scroll suave hasta ahí.
+  protected scrollToProperties(event: Event): void {
+    event.preventDefault();
+    this.viewportScroller.scrollToAnchor('propiedades');
+  }
+}
