@@ -50,11 +50,11 @@ export class PropertyList {
   );
 
   protected onNewProperty(): void {
-    this.router.navigateByUrl('/propiedades/nueva');
+    this.router.navigateByUrl('/admin/propiedades/nueva');
   }
 
   protected onEditProperty(property: PropertyResponse): void {
-    this.router.navigateByUrl(`/propiedades/${property.id}/editar`);
+    this.router.navigateByUrl(`/admin/propiedades/${property.id}/editar`);
   }
 
   protected onStatusChange(event: { property: PropertyResponse; newStatus: PropertyStatus }): void {
