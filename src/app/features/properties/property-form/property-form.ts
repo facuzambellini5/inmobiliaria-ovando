@@ -247,7 +247,7 @@ export class PropertyForm {
         const request = this.buildRequest();
         if (this.isEditMode && this.propertyId) {
           await firstValueFrom(this.propertyService.update(this.propertyId, request));
-          this.router.navigateByUrl('/propiedades');
+          this.router.navigateByUrl('/admin/propiedades');
         } else {
           // Al crear, en vez de volver al listado, vamos al modo edición
           // de la propiedad recién creada: así las fotos (que necesitan
@@ -258,7 +258,7 @@ export class PropertyForm {
           // fotos que suba lo que el usuario haya elegido mientras
           // todavía estábamos creando la propiedad.
           await this.photosSection().uploadStagedFiles(created.id);
-          this.router.navigateByUrl(`/propiedades/${created.id}/editar`);
+          this.router.navigateByUrl(`/admin/propiedades/${created.id}/editar`);
         }
       } catch (error) {
         this.saveError.set(this.mapErrorToMessage(error));
@@ -269,7 +269,7 @@ export class PropertyForm {
   }
 
   protected onCancel(): void {
-    this.router.navigateByUrl('/propiedades');
+    this.router.navigateByUrl('/admin/propiedades');
   }
 
   protected onLocationSelected(location: { lat: number; lng: number }): void {

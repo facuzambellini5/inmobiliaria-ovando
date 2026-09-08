@@ -16,6 +16,6 @@ export class AdminShell {
 
   protected onLogout(): void {
     this.auth.logout();
-    this.router.navigateByUrl('/login');
+    this.router.navigateByUrl('/admin/login');
   }
 }
