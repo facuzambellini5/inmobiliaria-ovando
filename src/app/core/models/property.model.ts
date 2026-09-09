@@ -35,6 +35,11 @@ export const propertyStatusLabels: Record<PropertyStatus, string> = {
   VENDIDA: 'Vendida',
 };
 
+export const terrainTypeLabels: Record<TerrainType, string> = {
+  RESIDENCIAL: 'Residencial',
+  COMERCIAL: 'Comercial',
+};
+
 export interface PropertyRequest {
   title: string;
   description: string;

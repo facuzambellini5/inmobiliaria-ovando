@@ -21,10 +21,12 @@ import {
   Currency,
   Zone,
   PropertyStatus,
+  TerrainType,
   propertyTypeLabels,
   operationLabels,
   zoneLabels,
   propertyStatusLabels,
+  terrainTypeLabels,
 } from '../../../core/models/property.model';
 
 /**
@@ -49,6 +51,8 @@ interface PropertyFormValue {
   bathrooms: number;
   hasGarage: boolean;
   hasPatio: boolean;
+  surface: number;
+  terrainType: TerrainType | '';
   lat: number;
   lng: number;
 }
@@ -70,6 +74,8 @@ function emptyPropertyForm(): PropertyFormValue {
     bathrooms: 0,
     hasGarage: false,
     hasPatio: false,
+    surface: 0,
+    terrainType: '',
     lat: 0,
     lng: 0,
   };
@@ -148,6 +154,19 @@ export class PropertyForm {
         min(rentPricePath, 1, { message: 'Ingresá el precio de alquiler' });
       },
     );
+
+    applyWhen(
+      schemaPath.surface,
+      ({ valueOf }) => valueOf(schemaPath.type) === 'TERRENO',
+      (surfacePath) => {
+        min(surfacePath, 1, { message: 'Ingresá la superficie del terreno' });
+      },
+    );
+
+    required(schemaPath.terrainType, {
+      when: ({ valueOf }) => valueOf(schemaPath.type) === 'TERRENO',
+      message: 'Elegí el tipo de terreno',
+    });
   });
 
   // Para llenar los <mat-select> a partir de los mismos Record que ya
@@ -161,6 +180,10 @@ export class PropertyForm {
   protected readonly zoneOptions = Object.entries(zoneLabels) as [Zone, string][];
   protected readonly statusOptions = Object.entries(propertyStatusLabels) as [
     PropertyStatus,
+    string,
+  ][];
+  protected readonly terrainTypeOptions = Object.entries(terrainTypeLabels) as [
+    TerrainType,
     string,
   ][];
 
@@ -203,6 +226,8 @@ export class PropertyForm {
       bathrooms: property.bathrooms ?? 0,
       hasGarage: property.hasGarage,
       hasPatio: property.hasPatio,
+      surface: property.surface ?? 0,
+      terrainType: property.terrainType ?? '',
       lat: property.lat,
       lng: property.lng,
     };
@@ -210,14 +235,17 @@ export class PropertyForm {
 
   private buildRequest(): PropertyRequest {
     const value = this.formModel();
+    const type = value.type as PropertyType;
     const operation = value.operation as OperationType;
     const includesSale = operation === 'VENTA' || operation === 'AMBAS';
     const includesRent = operation === 'ALQUILER' || operation === 'AMBAS';
+    const isResidential = type === 'CASA' || type === 'DEPARTAMENTO';
+    const isLand = type === 'TERRENO';
 
     return {
       title: value.title,
       description: value.description,
-      type: value.type as PropertyType,
+      type,
       operation,
       currency: value.currency as Currency,
       address: value.address,
@@ -228,11 +256,16 @@ export class PropertyForm {
       // "Venta", tipeó un precio, y después cambió a "Alquiler").
       salePrice: includesSale ? value.salePrice || undefined : undefined,
       rentPrice: includesRent ? value.rentPrice || undefined : undefined,
-      rooms: value.rooms || undefined,
-      bedrooms: value.bedrooms || undefined,
-      bathrooms: value.bathrooms || undefined,
-      hasGarage: value.hasGarage,
-      hasPatio: value.hasPatio,
+      // Igual criterio para los campos que solo aplican según el tipo:
+      // si no es Casa/Departamento no mandamos ambientes/dormitorios/etc,
+      // y si no es Terreno no mandamos superficie/tipo de terreno.
+      rooms: isResidential ? value.rooms || undefined : undefined,
+      bedrooms: isResidential ? value.bedrooms || undefined : undefined,
+      bathrooms: isResidential ? value.bathrooms || undefined : undefined,
+      hasGarage: isResidential ? value.hasGarage : undefined,
+      hasPatio: isResidential ? value.hasPatio : undefined,
+      surface: isLand ? value.surface || undefined : undefined,
+      terrainType: isLand && value.terrainType !== '' ? value.terrainType : undefined,
       lat: value.lat,
       lng: value.lng,
     };
