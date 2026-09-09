@@ -1,8 +1,8 @@
 .property-browser {
   max-width: 78rem;
   margin: 0 auto;
-  padding: 2rem;
-  font-family: var(--font-body);
+  padding: 4rem;
+  font-family: var(--font-body), serif;
 
   @media (max-width: 600px) {
     padding: 1.25rem 1rem;
@@ -18,7 +18,7 @@
   }
 
   &__title {
-    font-family: var(--font-display);
+    font-family: var(--font-display), serif;
     font-size: 1.75rem;
     font-weight: 600;
     margin: 0;
@@ -35,7 +35,7 @@
     padding: 0.5rem 0.75rem;
     border: 1px solid #d1d5db;
     border-radius: 0.4rem;
-    font-family: var(--font-body);
+    font-family: var(--font-body), serif;
     font-size: 0.875rem;
     background-color: #ffffff;
   }

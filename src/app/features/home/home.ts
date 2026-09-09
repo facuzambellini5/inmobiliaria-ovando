@@ -11,11 +11,8 @@ import { PropertyBrowser } from '../property-browser/property-browser';
 export class Home {
   private readonly viewportScroller = inject(ViewportScroller);
 
-  // El botón del cover no navega a ninguna ruta nueva: las propiedades
-  // ya están renderizadas más abajo en esta misma página, así que solo
-  // hace scroll suave hasta ahí.
   protected scrollToProperties(event: Event): void {
     event.preventDefault();
-    this.viewportScroller.scrollToAnchor('propiedades');
+    this.viewportScroller.scrollToAnchor('propiedades', { behavior: 'smooth' });
   }
 }

@@ -253,7 +253,7 @@ export class PropertyForm {
           // lo pasamos al componente de fotos para que suba lo que el
           // usuario haya elegido mientras todavía estábamos creando.
           const created = await firstValueFrom(this.propertyService.create(request));
-          await this.photosSection().uploadStagedFiles(created.id);
+          this.photosSection().uploadStagedFiles(created.id);
           this.router.navigateByUrl('/admin/propiedades');
         }
       } catch (error) {

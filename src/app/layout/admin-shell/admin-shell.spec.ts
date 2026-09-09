@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { AdminShell } from './admin-shell';
 
 describe('AdminShell', () => {
@@ -8,6 +9,10 @@ describe('AdminShell', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AdminShell],
+      // AdminShell ahora usa SiteHeader, que tiene routerLink en su
+      // template — sin esto, Angular no encuentra un Router para
+      // resolverlo y la creación del componente falla.
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AdminShell);

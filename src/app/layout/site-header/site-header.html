@@ -1,0 +1,16 @@
+<header class="public-nav">
+  <a class="public-nav__brand" routerLink="/" (click)="onBrandClick($event)">
+    <img class="public-nav__logo" src="/logo.jpeg" alt="Ovando Vende" />
+    <span class="public-nav__title">Inmobiliaria Ovando</span>
+  </a>
+
+  <nav class="public-nav__links">
+    @for (link of links(); track link.path) {
+      <a class="public-nav__link" [routerLink]="link.path">{{ link.label }}</a>
+    }
+
+    @if (showLogout()) {
+      <button matButton="outlined" (click)="logout.emit()">Salir</button>
+    }
+  </nav>
+</header>
