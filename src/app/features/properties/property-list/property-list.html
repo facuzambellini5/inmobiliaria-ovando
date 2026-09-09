@@ -3,7 +3,7 @@
     <div>
       <h1 class="property-list__title">Propiedades</h1>
       @if (properties.hasValue()) {
-        <p class="property-list__count">{{ properties.value().totalElements }} en total</p>
+        <p class="property-list__count">{{ totalProperties() }} en total</p>
       }
     </div>
 

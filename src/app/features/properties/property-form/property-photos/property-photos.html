@@ -1,17 +1,12 @@
 <div class="property-photos">
   <div class="property-photos__header">
-    <h3 class="property-photos__title">
-      Fotos
-      @if (photos.hasValue()) {
-        ({{ photos.value().length }}/15)
-      }
-    </h3>
+    <h3 class="property-photos__title">Fotos ({{ totalCount }}/15)</h3>
 
     <button
       matButton="outlined"
       type="button"
       (click)="fileInput.click()"
-      [disabled]="isUploading() || (photos.value()?.length ?? 0) >= 15"
+      [disabled]="isUploading() || totalCount >= 15"
     >
       @if (isUploading()) {
         <mat-spinner diameter="18" />
@@ -32,26 +27,46 @@
     </p>
   }
 
-  @if (photos.hasValue()) {
-    @if (photos.value().length === 0) {
-      <p class="property-photos__empty">Subí entre 1 y 15 imágenes.</p>
-    } @else {
-      <div class="property-photos__grid">
-        @for (photo of photos.value(); track photo.id) {
-          <div class="photo-thumb">
-            <img [src]="photo.url" alt="" />
-            <button
-              matIconButton
-              type="button"
-              class="photo-thumb__delete"
-              (click)="onDeletePhoto(photo)"
-              aria-label="Borrar foto"
-            >
-              <mat-icon>close</mat-icon>
-            </button>
-          </div>
-        }
-      </div>
-    }
+  <!-- totalCount ya suma fotos guardadas + fotos pendientes (stagedFiles),
+       así que este empty state sirve tanto para "propiedad nueva, sin
+       elegir nada todavía" como para "propiedad existente, sin fotos". -->
+  @if (totalCount === 0 && !photos.isLoading()) {
+    <p class="property-photos__empty">Subí entre 1 y 15 imágenes.</p>
+  } @else {
+    <div class="property-photos__grid">
+      @for (photo of photos.value(); track photo.id) {
+        <div class="photo-thumb">
+          <img [src]="photo.url" alt="" />
+          <button
+            matIconButton
+            type="button"
+            class="photo-thumb__delete"
+            (click)="onDeletePhoto(photo)"
+            aria-label="Borrar foto"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      }
+
+      <!-- Fotos elegidas mientras la propiedad todavía no existe (sin id).
+           Se muestran con menor opacidad para diferenciarlas visualmente de
+           las ya guardadas — recién se suben de verdad al hacer click en
+           "Publicar propiedad". -->
+      @for (staged of stagedFiles(); track staged.previewUrl) {
+        <div class="photo-thumb photo-thumb--pending">
+          <img [src]="staged.previewUrl" alt="" />
+          <button
+            matIconButton
+            type="button"
+            class="photo-thumb__delete"
+            (click)="removeStagedFile(staged)"
+            aria-label="Quitar foto"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      }
+    </div>
   }
 </div>

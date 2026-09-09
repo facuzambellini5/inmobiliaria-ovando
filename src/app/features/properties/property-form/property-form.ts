@@ -249,16 +249,12 @@ export class PropertyForm {
           await firstValueFrom(this.propertyService.update(this.propertyId, request));
           this.router.navigateByUrl('/admin/propiedades');
         } else {
-          // Al crear, en vez de volver al listado, vamos al modo edición
-          // de la propiedad recién creada: así las fotos (que necesitan
-          // un id real) quedan disponibles para subir de una, sin un paso
-          // intermedio confuso de "guardá y después volvé a entrar".
+          // El id real recién existe después de crear la propiedad — se
+          // lo pasamos al componente de fotos para que suba lo que el
+          // usuario haya elegido mientras todavía estábamos creando.
           const created = await firstValueFrom(this.propertyService.create(request));
-          // Recién ACÁ existe un id real: le pedimos al componente de
-          // fotos que suba lo que el usuario haya elegido mientras
-          // todavía estábamos creando la propiedad.
           await this.photosSection().uploadStagedFiles(created.id);
-          this.router.navigateByUrl(`/admin/propiedades/${created.id}/editar`);
+          this.router.navigateByUrl('/admin/propiedades');
         }
       } catch (error) {
         this.saveError.set(this.mapErrorToMessage(error));

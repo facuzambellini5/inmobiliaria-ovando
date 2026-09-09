@@ -35,6 +35,14 @@ export class PropertyList {
     params: { page: 0, size: 20 },
   }));
 
+  protected readonly totalProperties = computed(
+    () =>
+      this.properties.value()?.totalElements ??
+      this.properties.value()?.numberOfElements ??
+      this.properties.value()?.content.length ??
+      0,
+  );
+
   protected readonly availableProperties = computed(
     () =>
       this.properties.value()?.content.filter((property) => property.status === 'DISPONIBLE') ?? [],
