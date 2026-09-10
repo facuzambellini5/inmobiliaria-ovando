@@ -1,8 +1,17 @@
-import { Component, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { form, FormField, submit, required, applyWhen, min } from '@angular/forms/signals';
+import {
+  form,
+  FormField,
+  submit,
+  required,
+  applyWhen,
+  min,
+  hidden,
+  maxLength,
+} from '@angular/forms/signals';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -55,6 +64,25 @@ interface PropertyFormValue {
   terrainType: TerrainType | '';
   lat: number;
   lng: number;
+}
+
+/**
+ * Casa y Departamento son los únicos tipos con campos "de vivienda"
+ * (ambientes, dormitorios, baños, garage, patio) — así lo dice la
+ * constraint chk_house_fields en la base: para cualquier otro tipo,
+ * esas columnas tienen que quedar en NULL. La usamos tanto para ocultar
+ * los inputs en el HTML como para no mandarlos en el request.
+ */
+function isResidentialType(type: PropertyFormValue['type']): boolean {
+  return type === 'CASA' || type === 'DEPARTAMENTO';
+}
+
+/**
+ * Terreno es el único tipo con superficie y tipo de terreno
+ * (chk_land_fields / chk_land_required en la base).
+ */
+function isLandType(type: PropertyFormValue['type']): boolean {
+  return type === 'TERRENO';
 }
 
 function emptyPropertyForm(): PropertyFormValue {
@@ -123,12 +151,35 @@ export class PropertyForm {
 
   protected readonly propertyForm = form(this.formModel, (schemaPath) => {
     required(schemaPath.title, { message: 'Ingresá un título' });
+    // Límite de caracteres: la base no lo exige (title es TEXT, sin
+    // tope), pero un título de propiedad no tiene sentido que sea un
+    // párrafo — 150 caracteres alcanza y sobra.
+    maxLength(schemaPath.title, 150, {
+      message: 'El título no puede superar los 150 caracteres',
+    });
+
     required(schemaPath.description, { message: 'Ingresá una descripción' });
+    maxLength(schemaPath.description, 2000, {
+      message: 'La descripción no puede superar los 2000 caracteres',
+    });
+
     required(schemaPath.type, { message: 'Elegí un tipo de propiedad' });
     required(schemaPath.operation, { message: 'Elegí una operación' });
     required(schemaPath.currency, { message: 'Elegí una moneda' });
+
     required(schemaPath.address, { message: 'Ingresá una dirección' });
+    maxLength(schemaPath.address, 200, {
+      message: 'La dirección no puede superar los 200 caracteres',
+    });
+
     required(schemaPath.zone, { message: 'Elegí una zona' });
+    // Campo no tiene zona (chk_campo_zone en la base). Un campo oculto
+    // con hidden() deja de "contar" para la validación del formulario,
+    // así que no hace falta además volver required() condicional acá:
+    // si Campo está seleccionado, el required de arriba se ignora solo.
+    hidden(schemaPath.zone, {
+      when: ({ valueOf }) => valueOf(schemaPath.type) === 'CAMPO',
+    });
 
     // "when" solo existe para required() — para exigir un mínimo de forma
     // condicional (el precio de venta solo si la operación lo incluye)
@@ -155,16 +206,48 @@ export class PropertyForm {
       },
     );
 
+    // --- Campos de Casa/Departamento (chk_house_fields en la base) ---
+    // Para cualquier otro tipo, se ocultan (así el usuario no los ve ni
+    // los completa) y de paso ninguno de los 3 numéricos admite
+    // negativos: -1 ambientes no tiene sentido en ningún tipo.
+    hidden(schemaPath.rooms, {
+      when: ({ valueOf }) => !isResidentialType(valueOf(schemaPath.type)),
+    });
+    hidden(schemaPath.bedrooms, {
+      when: ({ valueOf }) => !isResidentialType(valueOf(schemaPath.type)),
+    });
+    hidden(schemaPath.bathrooms, {
+      when: ({ valueOf }) => !isResidentialType(valueOf(schemaPath.type)),
+    });
+    hidden(schemaPath.hasGarage, {
+      when: ({ valueOf }) => !isResidentialType(valueOf(schemaPath.type)),
+    });
+    hidden(schemaPath.hasPatio, {
+      when: ({ valueOf }) => !isResidentialType(valueOf(schemaPath.type)),
+    });
+
+    min(schemaPath.rooms, 0, { message: 'Los ambientes no pueden ser negativos' });
+    min(schemaPath.bedrooms, 0, { message: 'Los dormitorios no pueden ser negativos' });
+    min(schemaPath.bathrooms, 0, { message: 'Los baños no pueden ser negativos' });
+
+    // --- Campos de Terreno (chk_land_fields / chk_land_required) ---
+    hidden(schemaPath.surface, {
+      when: ({ valueOf }) => !isLandType(valueOf(schemaPath.type)),
+    });
+    hidden(schemaPath.terrainType, {
+      when: ({ valueOf }) => !isLandType(valueOf(schemaPath.type)),
+    });
+
     applyWhen(
       schemaPath.surface,
-      ({ valueOf }) => valueOf(schemaPath.type) === 'TERRENO',
+      ({ valueOf }) => isLandType(valueOf(schemaPath.type)),
       (surfacePath) => {
         min(surfacePath, 1, { message: 'Ingresá la superficie del terreno' });
       },
     );
 
     required(schemaPath.terrainType, {
-      when: ({ valueOf }) => valueOf(schemaPath.type) === 'TERRENO',
+      when: ({ valueOf }) => isLandType(valueOf(schemaPath.type)),
       message: 'Elegí el tipo de terreno',
     });
   });
@@ -173,10 +256,19 @@ export class PropertyForm {
   // usa la tabla — una sola fuente de verdad para las etiquetas en toda
   // la app, en vez de repetir las opciones acá.
   protected readonly typeOptions = Object.entries(propertyTypeLabels) as [PropertyType, string][];
-  protected readonly operationOptions = Object.entries(operationLabels) as [
-    OperationType,
-    string,
-  ][];
+
+  // Cochera es "solo informativa" (chk_cochera + chk_informativa en la
+  // base: esas dos constraints juntas dicen que Informativa SOLO puede
+  // usarse con Cochera, y que Cochera SOLO puede ser Informativa). Por
+  // eso el select de operación cambia sus opciones según el tipo, en vez
+  // de mostrar las 4 siempre y confiar en que el backend rechace la
+  // combinación inválida.
+  protected readonly operationOptions = computed(() => {
+    const isCochera = this.propertyForm.type().value() === 'COCHERA';
+    return (Object.entries(operationLabels) as [OperationType, string][]).filter(([key]) =>
+      isCochera ? key === 'INFORMATIVA' : key !== 'INFORMATIVA',
+    );
+  });
   protected readonly zoneOptions = Object.entries(zoneLabels) as [Zone, string][];
   protected readonly statusOptions = Object.entries(propertyStatusLabels) as [
     PropertyStatus,
@@ -239,8 +331,9 @@ export class PropertyForm {
     const operation = value.operation as OperationType;
     const includesSale = operation === 'VENTA' || operation === 'AMBAS';
     const includesRent = operation === 'ALQUILER' || operation === 'AMBAS';
-    const isResidential = type === 'CASA' || type === 'DEPARTAMENTO';
-    const isLand = type === 'TERRENO';
+    const isResidential = isResidentialType(type);
+    const isLand = isLandType(type);
+    const isCampo = type === 'CAMPO';
 
     return {
       title: value.title,
@@ -249,7 +342,9 @@ export class PropertyForm {
       operation,
       currency: value.currency as Currency,
       address: value.address,
-      zone: value.zone === '' ? undefined : value.zone,
+      // Campo no tiene zona (chk_campo_zone) — mismo criterio que con
+      // el resto de los campos condicionales: si no aplica, no se manda.
+      zone: !isCampo && value.zone !== '' ? value.zone : undefined,
       status: value.status,
       // Si la operación no incluye venta/alquiler, no mandamos ese precio
       // aunque haya quedado un valor viejo cargado (ej. el usuario probó
@@ -299,6 +394,44 @@ export class PropertyForm {
 
   protected onCancel(): void {
     this.router.navigateByUrl('/admin/propiedades');
+  }
+
+  /**
+   * Ocultar un campo con hidden() (en el schema) hace que deje de
+   * exigirse, pero NO borra el valor que haya quedado cargado en el
+   * modelo. Si alguien pasa de "Casa" con 3 ambientes a "Terreno" y
+   * después vuelve a "Casa", ese 3 seguiría ahí. Por eso, cada vez que
+   * cambia el tipo, limpiamos a mano los campos que dejaron de aplicar.
+   */
+  protected onTypeChange(newType: PropertyType): void {
+    if (!isResidentialType(newType)) {
+      this.propertyForm.rooms().value.set(0);
+      this.propertyForm.bedrooms().value.set(0);
+      this.propertyForm.bathrooms().value.set(0);
+      this.propertyForm.hasGarage().value.set(false);
+      this.propertyForm.hasPatio().value.set(false);
+    }
+
+    if (!isLandType(newType)) {
+      this.propertyForm.surface().value.set(0);
+      this.propertyForm.terrainType().value.set('');
+    }
+
+    if (newType === 'CAMPO') {
+      this.propertyForm.zone().value.set('');
+    }
+
+    // Cochera es la única con la operación "Informativa": si se elige
+    // Cochera, la forzamos (es la única opción que va a quedar en el
+    // select). Si se sale de Cochera y había quedado "Informativa"
+    // puesta, la limpiamos para que el usuario elija una operación
+    // válida de nuevo.
+    const currentOperation = this.propertyForm.operation().value();
+    if (newType === 'COCHERA' && currentOperation !== 'INFORMATIVA') {
+      this.propertyForm.operation().value.set('INFORMATIVA');
+    } else if (newType !== 'COCHERA' && currentOperation === 'INFORMATIVA') {
+      this.propertyForm.operation().value.set('');
+    }
   }
 
   protected onLocationSelected(location: { lat: number; lng: number }): void {

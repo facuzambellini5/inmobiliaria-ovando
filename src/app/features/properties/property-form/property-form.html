@@ -5,7 +5,7 @@
 
   @if (isLoading()) {
     <div class="property-form-page__status">
-      <mat-spinner diameter="32" />
+      <mat-spinner diameter="32"></mat-spinner>
     </div>
   } @else {
     <mat-card appearance="outlined" class="property-form-card">
@@ -39,7 +39,7 @@
         <div class="form-row form-row--four">
           <mat-form-field appearance="outline" class="form-row__field">
             <mat-label>Tipo</mat-label>
-            <mat-select [formField]="propertyForm.type">
+            <mat-select [formField]="propertyForm.type" (selectionChange)="onTypeChange($event.value)">
               @for (option of typeOptions; track option[0]) {
                 <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
               }
@@ -49,20 +49,22 @@
           <mat-form-field appearance="outline" class="form-row__field">
             <mat-label>Operación</mat-label>
             <mat-select [formField]="propertyForm.operation">
-              @for (option of operationOptions; track option[0]) {
+              @for (option of operationOptions(); track option[0]) {
                 <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="form-row__field">
-            <mat-label>Zona</mat-label>
-            <mat-select [formField]="propertyForm.zone">
-              @for (option of zoneOptions; track option[0]) {
-                <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+          @if (!propertyForm.zone().hidden()) {
+            <mat-form-field appearance="outline" class="form-row__field">
+              <mat-label>Zona</mat-label>
+              <mat-select [formField]="propertyForm.zone">
+                @for (option of zoneOptions; track option[0]) {
+                  <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          }
 
           <mat-form-field appearance="outline" class="form-row__field">
             <mat-label>Estado</mat-label>
@@ -104,32 +106,79 @@
           }
         </div>
 
-        <div class="form-row form-row--details">
-          <mat-form-field appearance="outline" class="form-row__field form-row__field--small">
-            <mat-label>Ambientes</mat-label>
-            <input matInput type="number" [formField]="propertyForm.rooms" />
-          </mat-form-field>
+        <!--
+          Ambientes/dormitorios/baños/garage/patio SOLO aplican a
+          Casa y Departamento (chk_house_fields en la base) — para
+          cualquier otro tipo, hidden() en el schema los saca del medio
+          y ni siquiera se muestran. Usamos el .hidden() de "rooms" para
+          decidir todo el bloque porque los 5 campos se ocultan juntos
+          (mismo when en el schema).
+        -->
+        @if (!propertyForm.rooms().hidden()) {
+          <div class="form-row form-row--details">
+            <mat-form-field appearance="outline" class="form-row__field form-row__field--small">
+              <mat-label>Ambientes</mat-label>
+              <input matInput type="number" [formField]="propertyForm.rooms" />
+              @if (propertyForm.rooms().touched() && propertyForm.rooms().errors().length) {
+                <mat-error>{{ propertyForm.rooms().errors()[0].message }}</mat-error>
+              }
+            </mat-form-field>
 
-          <mat-form-field appearance="outline" class="form-row__field form-row__field--small">
-            <mat-label>Dormitorios</mat-label>
-            <input matInput type="number" [formField]="propertyForm.bedrooms" />
-          </mat-form-field>
+            <mat-form-field appearance="outline" class="form-row__field form-row__field--small">
+              <mat-label>Dormitorios</mat-label>
+              <input matInput type="number" [formField]="propertyForm.bedrooms" />
+              @if (propertyForm.bedrooms().touched() && propertyForm.bedrooms().errors().length) {
+                <mat-error>{{ propertyForm.bedrooms().errors()[0].message }}</mat-error>
+              }
+            </mat-form-field>
 
-          <mat-form-field appearance="outline" class="form-row__field form-row__field--small">
-            <mat-label>Baños</mat-label>
-            <input matInput type="number" [formField]="propertyForm.bathrooms" />
-          </mat-form-field>
+            <mat-form-field appearance="outline" class="form-row__field form-row__field--small">
+              <mat-label>Baños</mat-label>
+              <input matInput type="number" [formField]="propertyForm.bathrooms" />
+              @if (propertyForm.bathrooms().touched() && propertyForm.bathrooms().errors().length) {
+                <mat-error>{{ propertyForm.bathrooms().errors()[0].message }}</mat-error>
+              }
+            </mat-form-field>
 
-          <label class="form-row__toggle">
-            <span>Garage</span>
-            <mat-slide-toggle [formField]="propertyForm.hasGarage" />
-          </label>
+            <label class="form-row__toggle">
+              <span>Garage</span>
+              <mat-slide-toggle [formField]="propertyForm.hasGarage" />
+            </label>
 
-          <label class="form-row__toggle">
-            <span>Patio</span>
-            <mat-slide-toggle [formField]="propertyForm.hasPatio" />
-          </label>
-        </div>
+            <label class="form-row__toggle">
+              <span>Patio</span>
+              <mat-slide-toggle [formField]="propertyForm.hasPatio" />
+            </label>
+          </div>
+        }
+
+        <!--
+          Superficie y tipo de terreno SOLO aplican a Terreno
+          (chk_land_fields / chk_land_required en la base).
+        -->
+        @if (!propertyForm.surface().hidden()) {
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="form-row__field form-row__field--small">
+              <mat-label>Superficie (m²)</mat-label>
+              <input matInput type="number" step="any" [formField]="propertyForm.surface" />
+              @if (propertyForm.surface().touched() && propertyForm.surface().errors().length) {
+                <mat-error>{{ propertyForm.surface().errors()[0].message }}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-row__field">
+              <mat-label>Tipo de terreno</mat-label>
+              <mat-select [formField]="propertyForm.terrainType">
+                @for (option of terrainTypeOptions; track option[0]) {
+                  <mat-option [value]="option[0]">{{ option[1] }}</mat-option>
+                }
+              </mat-select>
+              @if (propertyForm.terrainType().touched() && propertyForm.terrainType().errors().length) {
+                <mat-error>{{ propertyForm.terrainType().errors()[0].message }}</mat-error>
+              }
+            </mat-form-field>
+          </div>
+        }
 
         <div class="property-form-card__map-placeholder">
           <p class="property-form-card__map-note">Ubicación en el mapa</p>
@@ -151,7 +200,7 @@
             </mat-form-field>
           </div>
         </div>
-
+        <!-- TODO VER ESTO -->
         <app-property-photos #photosSection [propertyId]="propertyId" />
 
         @if (saveError()) {
@@ -167,7 +216,7 @@
             [disabled]="propertyForm().invalid() || isSubmitting()"
           >
             @if (isSubmitting()) {
-              <mat-spinner diameter="20" />
+              <mat-spinner diameter="20"></mat-spinner>
             } @else {
               {{ isEditMode ? 'Guardar cambios' : 'Publicar propiedad' }}
             }
