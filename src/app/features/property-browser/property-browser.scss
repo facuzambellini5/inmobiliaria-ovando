@@ -67,15 +67,23 @@
 
   &__grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    // "minmax(0, 1fr)" en vez de simplemente "1fr": por default, una columna
+    // de grid no se achica más allá del contenido más ancho que tenga adentro
+    // (su "min-content"). Un título largo SIN espacios (una palabra gigante,
+    // por ejemplo) no tiene dónde cortarse, así que esa columna empuja su
+    // ancho de mínimo hacia arriba — y como las 3 columnas comparten el
+    // mismo ancho, la fila entera se estira y desarma el resto de las cards.
+    // El "0" le dice al grid "el mínimo de esta columna es cero", así que
+    // ninguna card puede forzar el ancho de las demás.
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1.25rem;
 
     @media (max-width: 1000px) {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     @media (max-width: 560px) {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 }

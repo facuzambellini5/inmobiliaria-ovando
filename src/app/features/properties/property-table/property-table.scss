@@ -1,5 +1,12 @@
 .property-table {
   width: 100%;
+  // Por default una <table> mide cada columna según su contenido más ancho
+  // (table-layout: auto) — un título largo estira esa columna, y como no
+  // hay más ancho disponible, empuja "Acciones" fuera de la pantalla y hay
+  // que scrollear para llegar a los botones. Con "fixed", el ancho de cada
+  // columna sale de lo que definamos en CSS (ver .mat-column-title abajo),
+  // no del contenido, así que ninguna celda puede estirar la tabla entera.
+  table-layout: fixed;
 
   // Por default, mat-table le da a cada fila una altura FIJA pensada para
   // texto simple (~52px) — no le alcanza a un botón + el trigger de
@@ -10,6 +17,25 @@
   // otra versión.
   --mat-table-row-item-container-height: 2rem;
   --mat-table-header-container-height: 3.25rem;
+
+  // Material le pone a cada celda de esta columna la clase "mat-column-title"
+  // automáticamente (a partir del nombre "title" en matColumnDef). Con un
+  // ancho fijo + estas tres propiedades juntas, un título largo se corta con
+  // "…" en vez de agrandar la columna.
+  .mat-column-title {
+    width: 24%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  // A esta la reservamos aparte para que "Editar" + el botón de "Estado"
+  // siempre tengan lugar, aunque el resto de las columnas se achiquen. Tipo,
+  // operación, precio, zona y estado no necesitan un ancho explícito: con
+  // table-layout: fixed, se reparten solas el 60% que sobra en partes iguales.
+  .mat-column-actions {
+    width: 16%;
+  }
 
   &__empty {
     padding: 3rem 1rem;

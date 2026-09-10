@@ -1,3 +1,13 @@
+:host {
+  // app-property-card es el elemento que realmente vive dentro del grid
+  // (el <a class="property-card"> está un nivel más adentro). Sin este
+  // min-width: 0 explícito, el host hereda el mismo problema que arreglamos
+  // en el grid: por default no se achica más allá de lo que necesite su
+  // contenido.
+  display: block;
+  min-width: 0;
+}
+
 .property-card {
   display: block;
   text-decoration: none;
@@ -71,6 +81,11 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    // Si el título trae una palabra sin espacios que sea más ancha que la
+    // card (nombres pegados, algo tipeado sin espacios, etc.), esto la deja
+    // cortar en cualquier punto en vez de desbordar el ancho de la card.
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   &__details {

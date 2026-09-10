@@ -43,18 +43,26 @@ export class PropertyList {
       0,
   );
 
-  protected readonly availableProperties = computed(
-    () =>
-      this.properties.value()?.content.filter((property) => property.status === 'DISPONIBLE') ?? [],
+  // Todas las propiedades, ordenadas de la más nueva a la más vieja según
+  // createdAt. Las tres listas de abajo (disponibles/alquiladas/vendidas)
+  // filtran a partir de acá, así que las tres quedan ordenadas igual sin
+  // repetir el sort tres veces.
+  private readonly sortedProperties = computed(() => {
+    const content = this.properties.value()?.content ?? [];
+    return [...content].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+  });
+
+  protected readonly availableProperties = computed(() =>
+    this.sortedProperties().filter((property) => property.status === 'DISPONIBLE'),
   );
-  protected readonly selledProperties = computed(
-    () =>
-      this.properties.value()?.content.filter((property) => property.status === 'VENDIDA') ?? [],
+  protected readonly selledProperties = computed(() =>
+    this.sortedProperties().filter((property) => property.status === 'VENDIDA'),
   );
 
-  protected readonly rentedProperties = computed(
-    () =>
-      this.properties.value()?.content.filter((property) => property.status === 'ALQUILADA') ?? [],
+  protected readonly rentedProperties = computed(() =>
+    this.sortedProperties().filter((property) => property.status === 'ALQUILADA'),
   );
 
   protected onNewProperty(): void {
