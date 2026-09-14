@@ -4,11 +4,12 @@ import { environment } from '../../../environments/environment';
 import { Page, PropertyResponse } from '../../core/models/property.model';
 import { PropertyFilters, PropertyFiltersValue } from './property-filters/property-filters';
 import { PropertyCard } from './property-card/property-card';
+import { Pagination } from '../../shared/pagination/pagination';
 
 // Cuántas propiedades pedimos por página. 12 reparte parejo en la grilla
 // de 3 columnas (4 filas) y en la de 2 columnas de tablet (6 filas), sin
 // dejar una fila pelada a la mitad en los anchos de pantalla más comunes.
-const PAGE_SIZE = 9;
+const PAGE_SIZE = 12;
 
 function emptyFilters(): PropertyFiltersValue {
   return { type: '', operation: '', zone: '', minPrice: null, maxPrice: null };
@@ -16,7 +17,7 @@ function emptyFilters(): PropertyFiltersValue {
 
 @Component({
   selector: 'app-property-browser',
-  imports: [PropertyFilters, PropertyCard],
+  imports: [PropertyFilters, PropertyCard, Pagination],
   styleUrl: './property-browser.scss',
   templateUrl: './property-browser.html',
 })
@@ -82,6 +83,6 @@ export class PropertyBrowser {
     // Al cambiar de página volvemos arriba de la grilla: si el usuario
     // scrolleó hasta el pie para tocar "Siguiente", sin esto se queda
     // mirando el mismo lugar mientras arriba ya cambió todo el contenido.
-    this.resultsSection().nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    this.resultsSection().nativeElement.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
   }
 }

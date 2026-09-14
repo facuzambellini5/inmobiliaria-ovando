@@ -1,0 +1,42 @@
+@if (totalPages() > 1) {
+  <nav class="pagination" aria-label="Paginación de resultados">
+    <p class="pagination__summary">
+      Mostrando {{ rangeStart() }}–{{ rangeEnd() }} de {{ totalElements() }}
+    </p>
+
+    <div class="pagination__controls">
+      <button
+        type="button"
+        class="pagination__arrow"
+        [disabled]="isFirstPage()"
+        (click)="previous()"
+        aria-label="Página anterior"
+      >
+        ‹
+      </button>
+
+      @for (pageNumber of visiblePages(); track pageNumber) {
+        <button
+          type="button"
+          class="pagination__page"
+          [class.pagination__page--active]="pageNumber === page()"
+          [attr.aria-current]="pageNumber === page() ? 'page' : null"
+          [attr.aria-label]="'Ir a la página ' + (pageNumber + 1)"
+          (click)="goTo(pageNumber)"
+        >
+          {{ pageNumber + 1 }}
+        </button>
+      }
+
+      <button
+        type="button"
+        class="pagination__arrow"
+        [disabled]="isLastPage()"
+        (click)="next()"
+        aria-label="Página siguiente"
+      >
+        ›
+      </button>
+    </div>
+  </nav>
+}

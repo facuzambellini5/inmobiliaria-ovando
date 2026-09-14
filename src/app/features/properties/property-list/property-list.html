@@ -2,7 +2,7 @@
   <header class="property-list__header">
     <div>
       <h1 class="property-list__title">Propiedades</h1>
-      @if (properties.hasValue()) {
+      @if (allTabsLoaded()) {
         <p class="property-list__count">{{ totalProperties() }} en total</p>
       }
     </div>
@@ -13,46 +13,83 @@
     </button>
   </header>
 
-  @if (properties.isLoading()) {
-    <div class="property-list__status">
-      <mat-spinner diameter="32"></mat-spinner>
-    </div>
-  }
-
-  @if (properties.error()) {
-    <p class="property-list__status property-list__status--error" role="alert">
-      No pudimos cargar las propiedades. Probá recargar la página.
-    </p>
-  }
-
-  @if (properties.hasValue()) {
-    <mat-tab-group class="property-list__tabs">
-      <mat-tab [label]="'Disponibles (' + availableProperties().length + ')'">
+  <mat-tab-group class="property-list__tabs">
+    <mat-tab [label]="'Disponibles (' + availableTotal() + ')'">
+      @if (availableProperties.isLoading()) {
+        <div class="property-list__status">
+          <mat-spinner diameter="32"></mat-spinner>
+        </div>
+      } @else if (availableProperties.error()) {
+        <p class="property-list__status property-list__status--error" role="alert">
+          No pudimos cargar las propiedades disponibles. Probá recargar la página.
+        </p>
+      } @else {
         <app-property-table
-          [properties]="availableProperties()"
+          [properties]="availableProperties.value()?.content ?? []"
           emptyMessage="No hay propiedades disponibles."
           (edit)="onEditProperty($event)"
           (statusChange)="onStatusChange($event)"
         />
-      </mat-tab>
+        <app-pagination
+          [page]="availablePage()"
+          [totalPages]="availableProperties.value()?.totalPages ?? 0"
+          [totalElements]="availableProperties.value()?.totalElements ?? 0"
+          [pageSize]="PAGE_SIZE"
+          (pageChange)="availablePage.set($event)"
+        />
+      }
+    </mat-tab>
 
-      <mat-tab [label]="'Alquiladas (' + rentedProperties().length + ')'">
+    <mat-tab [label]="'Alquiladas (' + rentedTotal() + ')'">
+      @if (rentedProperties.isLoading()) {
+        <div class="property-list__status">
+          <mat-spinner diameter="32"></mat-spinner>
+        </div>
+      } @else if (rentedProperties.error()) {
+        <p class="property-list__status property-list__status--error" role="alert">
+          No pudimos cargar las propiedades alquiladas. Probá recargar la página.
+        </p>
+      } @else {
         <app-property-table
-          [properties]="rentedProperties()"
+          [properties]="rentedProperties.value()?.content ?? []"
           emptyMessage="Todavía no hay propiedades alquiladas."
           (edit)="onEditProperty($event)"
           (statusChange)="onStatusChange($event)"
         />
-      </mat-tab>
+        <app-pagination
+          [page]="rentedPage()"
+          [totalPages]="rentedProperties.value()?.totalPages ?? 0"
+          [totalElements]="rentedProperties.value()?.totalElements ?? 0"
+          [pageSize]="PAGE_SIZE"
+          (pageChange)="rentedPage.set($event)"
+        />
+      }
+    </mat-tab>
 
-      <mat-tab [label]="'Vendidas (' + selledProperties().length + ')'">
+    <mat-tab [label]="'Vendidas (' + soldTotal() + ')'">
+      @if (soldProperties.isLoading()) {
+        <div class="property-list__status">
+          <mat-spinner diameter="32"></mat-spinner>
+        </div>
+      } @else if (soldProperties.error()) {
+        <p class="property-list__status property-list__status--error" role="alert">
+          No pudimos cargar las propiedades vendidas. Probá recargar la página.
+        </p>
+      } @else {
         <app-property-table
-          [properties]="selledProperties()"
+          [properties]="soldProperties.value()?.content ?? []"
           emptyMessage="Todavía no hay propiedades vendidas."
           (edit)="onEditProperty($event)"
           (statusChange)="onStatusChange($event)"
         />
-      </mat-tab>
-    </mat-tab-group>
-  }
+        <app-pagination
+          [page]="soldPage()"
+          [totalPages]="soldProperties.value()?.totalPages ?? 0"
+          [totalElements]="soldProperties.value()?.totalElements ?? 0"
+          [pageSize]="PAGE_SIZE"
+          (pageChange)="soldPage.set($event)"
+        />
+      }
+    </mat-tab>
+  </mat-tab-group>
 </section>
