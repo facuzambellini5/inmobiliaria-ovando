@@ -32,8 +32,8 @@
         />
         <app-pagination
           [page]="availablePage()"
-          [totalPages]="availableProperties.value()?.totalPages ?? 0"
-          [totalElements]="availableProperties.value()?.totalElements ?? 0"
+          [totalPages]="availableTotalPages()"
+          [totalElements]="availableTotal()"
           [pageSize]="PAGE_SIZE"
           (pageChange)="availablePage.set($event)"
         />
@@ -58,8 +58,8 @@
         />
         <app-pagination
           [page]="rentedPage()"
-          [totalPages]="rentedProperties.value()?.totalPages ?? 0"
-          [totalElements]="rentedProperties.value()?.totalElements ?? 0"
+          [totalPages]="rentedTotalPages()"
+          [totalElements]="rentedTotal()"
           [pageSize]="PAGE_SIZE"
           (pageChange)="rentedPage.set($event)"
         />
@@ -84,8 +84,8 @@
         />
         <app-pagination
           [page]="soldPage()"
-          [totalPages]="soldProperties.value()?.totalPages ?? 0"
-          [totalElements]="soldProperties.value()?.totalElements ?? 0"
+          [totalPages]="soldTotalPages()"
+          [totalElements]="soldTotal()"
           [pageSize]="PAGE_SIZE"
           (pageChange)="soldPage.set($event)"
         />

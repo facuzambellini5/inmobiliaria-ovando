@@ -1,7 +1,12 @@
 import { Component, ElementRef, computed, signal, viewChild } from '@angular/core';
 import { httpResource } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { Page, PropertyResponse } from '../../core/models/property.model';
+import {
+  Page,
+  PropertyResponse,
+  pageTotalElements,
+  pageTotalPages,
+} from '../../core/models/property.model';
 import { PropertyFilters, PropertyFiltersValue } from './property-filters/property-filters';
 import { PropertyCard } from './property-card/property-card';
 import { Pagination } from '../../shared/pagination/pagination';
@@ -9,7 +14,7 @@ import { Pagination } from '../../shared/pagination/pagination';
 // Cuántas propiedades pedimos por página. 12 reparte parejo en la grilla
 // de 3 columnas (4 filas) y en la de 2 columnas de tablet (6 filas), sin
 // dejar una fila pelada a la mitad en los anchos de pantalla más comunes.
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 9;
 
 function emptyFilters(): PropertyFiltersValue {
   return { type: '', operation: '', zone: '', minPrice: null, maxPrice: null };
@@ -67,8 +72,15 @@ export class PropertyBrowser {
   });
 
   protected readonly items = computed(() => this.properties.value()?.content ?? []);
-  protected readonly totalElements = computed(() => this.properties.value()?.totalElements ?? 0);
-  protected readonly totalPages = computed(() => this.properties.value()?.totalPages ?? 0);
+  // Usamos los helpers `pageTotalElements`/`pageTotalPages` en vez de
+  // leer `.totalElements`/`.totalPages` directo del value(): el backend
+  // puede mandar esos números sueltos en la raíz o anidados adentro de
+  // "page" según cómo esté configurada la serialización de Spring Data
+  // del otro lado, y los helpers contemplan las dos formas (ver
+  // property.model.ts). Leerlos directo es lo que hacía que acá siempre
+  // diera 0 con un backend en modo anidado.
+  protected readonly totalElements = computed(() => pageTotalElements(this.properties.value()));
+  protected readonly totalPages = computed(() => pageTotalPages(this.properties.value()));
 
   protected onFiltersChange(value: PropertyFiltersValue): void {
     this.filters.set(value);

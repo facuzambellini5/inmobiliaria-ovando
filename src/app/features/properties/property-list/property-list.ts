@@ -13,6 +13,8 @@ import {
   PropertyRequest,
   PropertyResponse,
   PropertyStatus,
+  pageTotalElements,
+  pageTotalPages,
   propertyStatusLabels,
 } from '../../../core/models/property.model';
 import { Property } from '../../../core/services/property';
@@ -64,13 +66,26 @@ export class PropertyList {
   protected readonly rentedProperties = this.statusResource('ALQUILADA', this.rentedPage);
   protected readonly soldProperties = this.statusResource('VENDIDA', this.soldPage);
 
-  protected readonly availableTotal = computed(
-    () => this.availableProperties.value()?.totalElements ?? 0,
+  // `pageTotalElements`/`pageTotalPages` en vez de leer `.totalElements`/
+  // `.totalPages` directo: el backend puede mandar esos números sueltos
+  // en la raíz o anidados adentro de "page" según cómo esté configurada
+  // la serialización de Spring Data del otro lado (ver
+  // property.model.ts), y leerlos directo es lo que hacía que las tres
+  // pestañas mostraran siempre 0 y no se vieran los botones de
+  // paginación.
+  protected readonly availableTotal = computed(() =>
+    pageTotalElements(this.availableProperties.value()),
   );
-  protected readonly rentedTotal = computed(
-    () => this.rentedProperties.value()?.totalElements ?? 0,
+  protected readonly rentedTotal = computed(() => pageTotalElements(this.rentedProperties.value()));
+  protected readonly soldTotal = computed(() => pageTotalElements(this.soldProperties.value()));
+
+  protected readonly availableTotalPages = computed(() =>
+    pageTotalPages(this.availableProperties.value()),
   );
-  protected readonly soldTotal = computed(() => this.soldProperties.value()?.totalElements ?? 0);
+  protected readonly rentedTotalPages = computed(() =>
+    pageTotalPages(this.rentedProperties.value()),
+  );
+  protected readonly soldTotalPages = computed(() => pageTotalPages(this.soldProperties.value()));
 
   // Suma de las tres: al ser cada totalElements el conteo REAL de esa
   // pestaña (no solo de lo que entró en la página actual), esta suma da
